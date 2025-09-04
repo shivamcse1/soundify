@@ -12,7 +12,9 @@ class AppColors {
   // Common color //
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF1C1C1C);
-  static const Color grey = Color(0xFF1E1E1E);
+  static const Color error = Color(0xFFF44336);   // Red
+  static const Color success = Color(0xFF4CAF50); // Green
+  static const Color warning = Color(0xFFFF9800); // 
 
   // Dark Theme Colors
   static const Color darkPrimary = Color(0xFF4FC3F7); // Electric Blue
