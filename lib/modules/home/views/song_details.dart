@@ -49,20 +49,20 @@ class _SongDetailsState extends State<SongDetails> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildHeaderCircularImg(),
-            SizedBox(height: 20.h,),
+            SizedBox(height: 20.h),
             _buildSongName(),
-             Spacer(),
+            Spacer(),
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 10),
+              padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10),
               child: _buildMusicSlider(),
             ),
 
             Padding(
-              padding: EdgeInsets.only(bottom: 30.h),
+              padding: EdgeInsets.only(bottom: 20.h),
               child: _buildPlayButton(),
             ),
             Padding(
-              padding: EdgeInsets.only(bottom: 20.h),
+              padding: EdgeInsets.only(bottom: 10.h),
               child: _buildBottomAction(),
             ),
           ],
@@ -91,6 +91,7 @@ class _SongDetailsState extends State<SongDetails> {
 
   Widget _buildSongName() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomText(
           text: "Tujhe Yaad Na Meri Ayi tujhe ab kya kahna",
@@ -118,6 +119,7 @@ class _SongDetailsState extends State<SongDetails> {
 
         Expanded(
           child: Slider(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             min: 0,
             max: 10,
             value: 3.0,
@@ -139,69 +141,73 @@ class _SongDetailsState extends State<SongDetails> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         InkWell(
-            onTap: (){},
-            child: Icon(Icons.skip_previous, color: AppColors.white, size: 35.r)),
+          onTap: () {},
+          child: Icon(
+            Icons.skip_previous_rounded,
+            color: AppColors.white,
+            size: 40.r,
+          ),
+        ),
         InkWell(
-            onTap: (){},
-            child: Icon(Icons.play_circle_fill, color: AppColors.white, size: 55.r)),
+          onTap: () {},
+          child: Icon(
+            Icons.play_circle_fill_rounded,
+            color: AppColors.primary,
+            size: 60.r,
+          ),
+        ),
         InkWell(
-            onTap: (){},
-            child: Icon(Icons.skip_next_sharp, color: AppColors.white, size: 35.r)),
+          onTap: () {},
+          child: Icon(
+            Icons.skip_next_rounded,
+            color: AppColors.white,
+            size: 40.r,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildBottomAction(){
+  Widget _buildBottomAction() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         _buildColumnIconItem(
           icon: Icons.shuffle,
           text: "Shuffle",
-          onTap: (){
-
-          }
+          onTap: () {},
         ),
         _buildColumnIconItem(
-            icon: Icons.queue_music_sharp,
-            text: "PlayList",
-            onTap: (){
-
-            }
+          icon: Icons.queue_music_sharp,
+          text: "PlayList",
+          onTap: () {},
         ),
         _buildColumnIconItem(
-            icon: Icons.favorite_border,
-            text: "Favorite",
-            onTap: (){
-
-            }
+          icon: Icons.favorite_border,
+          text: "Favorite",
+          onTap: () {},
         ),
 
-        _buildColumnIconItem(
-            icon: Icons.repeat,
-             text: "Repeat",
-            onTap: (){
-
-            }
-        )
+        _buildColumnIconItem(icon: Icons.repeat, text: "Repeat", onTap: () {}),
       ],
     );
   }
-
-
 
   Widget _buildColumnIconItem({
     required IconData icon,
     required String text,
     VoidCallback? onTap,
-  }){
+  }) {
     return InkWell(
       onTap: onTap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon,color: AppColors.softWhite,size: 25.r,),
-          CustomText(text: text,style: TextStyle(fontSize: 12.sp, color: AppColors.softWhite),)
+          Icon(icon, color: AppColors.softWhite, size: 25.r),
+          CustomText(
+            text: text,
+            style: TextStyle(fontSize: 12.sp, color: AppColors.softWhite),
+          ),
         ],
       ),
     );

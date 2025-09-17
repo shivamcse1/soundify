@@ -1,12 +1,12 @@
-class SongModel {
+class MySongModel {
   final String? name;
   final String? album;
   final String? artist;
    
-   SongModel({this.album,this.artist,this.name});
+   MySongModel({this.album,this.artist,this.name});
 
-   factory SongModel.fromJson(Map<String,dynamic> json){
-    return SongModel(
+   factory MySongModel.fromJson(Map<String,dynamic> json){
+    return MySongModel(
       name: json['name'],
       album: json['album'],
       artist: json['artist']

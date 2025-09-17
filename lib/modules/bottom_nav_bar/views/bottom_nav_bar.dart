@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:soundify/core/theme/app_colors.dart';
+import 'package:soundify/modules/bottom_nav_bar/views/song_bottom_sheet.dart';
 import 'package:soundify/modules/home/views/home.dart';
 import 'package:soundify/modules/profile/views/profile.dart';
 import 'package:soundify/modules/songs/views/songs.dart';
@@ -18,6 +19,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[currentIndex],
+      bottomSheet: SongBottomSheet(),
       bottomNavigationBar: NavigationBar(
         // backgroundColor: AppColors.background,
         height: 60,

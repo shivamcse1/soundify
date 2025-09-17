@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:soundify/core/theme/app_colors.dart';
+import 'package:soundify/modules/home/controller/home_controller.dart';
 import 'package:soundify/modules/home/widget/custom_song_silder.dart';
-import 'package:soundify/modules/home/widget/custom_song_tile.dart'
-    show CustomSongTile;
+import 'package:soundify/modules/home/widget/custom_song_tile.dart';
 import 'package:soundify/widgets/custom_text.dart';
 import 'package:soundify/widgets/custom_textfield.dart';
 
@@ -16,6 +17,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isSearchTap = false;
+  final HomeController homeController = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,17 +63,19 @@ class _HomeState extends State<Home> {
             /// All Song List ///
             SizedBox(height: 10.h),
             _buildSectionTile(),
-            ListView.separated(
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              itemCount: 5,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return CustomSongTile();
-              },
-              separatorBuilder: (context, index) {
-                return Divider(height: 5, color: AppColors.darkGrey);
-              },
+            Obx(
+              () => ListView.separated(
+                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: homeController.allSongs.length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return CustomSongTile(song: homeController.allSongs[index]);
+                },
+                separatorBuilder: (context, index) {
+                  return Divider(height: 5, color: AppColors.darkGrey);
+                },
+              ),
             ),
           ],
         ),

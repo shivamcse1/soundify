@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:soundify/core/theme/app_colors.dart';
 import 'package:soundify/modules/songs/views/all_songs.dart';
 import 'package:soundify/modules/songs/views/favourite_song.dart';
 import 'package:soundify/modules/songs/views/playlists.dart';
-import 'package:soundify/widgets/custom_text.dart';
 
 class Songs extends StatefulWidget {
   const Songs({super.key});

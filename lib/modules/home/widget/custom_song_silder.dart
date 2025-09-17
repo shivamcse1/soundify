@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:soundify/core/constant/image_constant.dart';
 import 'package:soundify/core/theme/app_colors.dart';
-import 'package:soundify/data/models/song_model.dart';
+import 'package:soundify/data/models/my_song_model.dart';
 import 'package:soundify/widgets/custom_text.dart';
 
 class CustomSongSilder extends StatelessWidget {
-  final List<SongModel> songData;
+  final List<MySongModel> songData;
   final double viewPortFraction;
   final double? rightGap;
   final double? radius;
