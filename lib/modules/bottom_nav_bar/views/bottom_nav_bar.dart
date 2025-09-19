@@ -19,9 +19,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[currentIndex],
-      bottomSheet: SongBottomSheet(),
+      // bottomSheet: SongBottomSheet(),
       bottomNavigationBar: NavigationBar(
-        // backgroundColor: AppColors.background,
         height: 60,
         selectedIndex: currentIndex,
         onDestinationSelected: (idx) {

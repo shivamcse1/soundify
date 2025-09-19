@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:soundify/core/theme/app_colors.dart';
-import 'package:soundify/modules/home/controller/home_controller.dart';
 import 'package:soundify/modules/home/widget/custom_song_tile.dart';
+import 'package:soundify/modules/songs/controller/song_controller.dart';
 
 class AllSongs extends StatefulWidget {
   const AllSongs({super.key});
@@ -15,7 +13,7 @@ class AllSongs extends StatefulWidget {
 }
 
 class _AllSongsState extends State<AllSongs> {
-  final HomeController homeController = Get.put(HomeController());
+  final SongController songController = Get.find<SongController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +31,7 @@ class _AllSongsState extends State<AllSongs> {
               
                   itemBuilder: (context, index) {
 
-                    return CustomSongTile(song: homeController.allSongs[index],);
+                    return CustomSongTile(song: songController.allSongs[index],index: index,);
                   },
                   separatorBuilder: (context, index) {
                     return Divider(height: 5, color: AppColors.darkGrey);

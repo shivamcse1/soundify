@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:soundify/core/constant/image_constant.dart';
+import 'package:get/get.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:soundify/core/theme/app_colors.dart';
+import 'package:soundify/modules/songs/controller/song_controller.dart';
 import 'package:soundify/widgets/custom_text.dart';
 
 class SongDetails extends StatefulWidget {
@@ -13,6 +14,8 @@ class SongDetails extends StatefulWidget {
 }
 
 class _SongDetailsState extends State<SongDetails> {
+  final SongController songController = Get.find<SongController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,71 +48,91 @@ class _SongDetailsState extends State<SongDetails> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _buildHeaderCircularImg(),
-            SizedBox(height: 20.h),
-            _buildSongName(),
-            Spacer(),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 10),
-              child: _buildMusicSlider(),
-            ),
+        child: Obx(() {
+          final SongModel song =
+              songController.allSongs[songController.currentSongIndex.value];
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeaderCircularImg(song: song),
+              SizedBox(height: 20.h),
+              _buildSongName(song: song),
+              Spacer(),
 
-            Padding(
-              padding: EdgeInsets.only(bottom: 20.h),
-              child: _buildPlayButton(),
-            ),
-            Padding(
-              padding: EdgeInsets.only(bottom: 10.h),
-              child: _buildBottomAction(),
-            ),
-          ],
-        ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 30.h, horizontal: 10),
+                child: _buildMusicSlider(song: song),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 30.h),
+                child: _buildPlayButton(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 10.h),
+                child: _buildBottomAction(),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
 
-  Widget _buildHeaderCircularImg() {
+  Widget _buildHeaderCircularImg({required SongModel song}) {
     return Align(
       alignment: Alignment.center,
       child: Container(
-        margin: EdgeInsets.only(top: 50.h, bottom: 30.h),
+        height: 220.h,
+        width: 220.w,
         padding: EdgeInsets.all(2),
+        margin: EdgeInsets.only(top: 50.h, bottom: 30.h),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: AppColors.primary,
         ),
-        child: CircleAvatar(
-          radius: 120,
-          backgroundImage: AssetImage(ImageConstant.albumImg),
+        child: QueryArtworkWidget(
+          id: song.id,
+          size: 220,
+          artworkBorder: BorderRadius.circular(110),
+          type: ArtworkType.AUDIO,
+          artworkFit: BoxFit.cover,
+          nullArtworkWidget: Icon(
+            Icons.music_note,
+            size: 70.r,
+            color: AppColors.white,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSongName() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          text: "Tujhe Yaad Na Meri Ayi tujhe ab kya kahna",
-          style: TextStyle(
-            color: AppColors.white,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w600,
+  Widget _buildSongName({required SongModel song}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomText(
+            text: song.title,
+            style: TextStyle(
+              color: AppColors.white,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 1,
           ),
-        ),
-        CustomText(
-          text: "Sonu Nigam",
-          style: TextStyle(color: AppColors.softWhite, fontSize: 14.sp),
-        ),
-      ],
+          CustomText(
+            text: "${song.artist}",
+            maxLines: 1,
+            style: TextStyle(color: AppColors.softWhite, fontSize: 14.sp),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildMusicSlider() {
+  Widget _buildMusicSlider({required SongModel song}) {
     return Row(
       children: [
         CustomText(
@@ -140,25 +163,47 @@ class _SongDetailsState extends State<SongDetails> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        InkWell(
-          onTap: () {},
-          child: Icon(
+        IconButton(
+          splashColor: AppColors.primary,
+          onPressed: () async {
+            await songController.playPreviousSong();
+          },
+          icon: Icon(
             Icons.skip_previous_rounded,
             color: AppColors.white,
             size: 40.r,
           ),
         ),
-        InkWell(
-          onTap: () {},
-          child: Icon(
-            Icons.play_circle_fill_rounded,
+
+        Container(
+          padding: EdgeInsets.all(3.r),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
             color: AppColors.primary,
-            size: 60.r,
+          ),
+          child: Obx(
+            () => IconButton(
+              splashColor: AppColors.primary,
+              onPressed: () async {
+                await songController.playPauseSong();
+              },
+              icon: Icon(
+                songController.isPlaying.value
+                    ? Icons.pause_rounded
+                    : Icons.play_arrow_rounded,
+                color: AppColors.white,
+                size: 35.r,
+              ),
+            ),
           ),
         ),
-        InkWell(
-          onTap: () {},
-          child: Icon(
+
+        IconButton(
+          splashColor: AppColors.primary,
+          onPressed: () async {
+            await songController.playNextSong();
+          },
+          icon: Icon(
             Icons.skip_next_rounded,
             color: AppColors.white,
             size: 40.r,

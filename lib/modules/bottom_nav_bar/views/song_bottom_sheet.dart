@@ -5,7 +5,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:soundify/core/constant/app_strings.dart';
 import 'package:soundify/core/routes/app_routes.dart';
 import 'package:soundify/core/theme/app_colors.dart';
-import 'package:soundify/modules/home/controller/home_controller.dart';
+import 'package:soundify/modules/songs/controller/song_controller.dart';
 import 'package:soundify/widgets/custom_text.dart';
 
 class SongBottomSheet extends StatefulWidget {
@@ -16,10 +16,11 @@ class SongBottomSheet extends StatefulWidget {
 }
 
 class _SongBottomSheetState extends State<SongBottomSheet> {
-  final HomeController homeController = Get.find<HomeController>();
+  final SongController songController = Get.find<SongController>();
   @override
   Widget build(BuildContext context) {
-    final song = homeController.allSongs[0];
+    final SongModel song =
+        songController.allSongs[songController.currentSongIndex.value];
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,7 +48,7 @@ class _SongBottomSheetState extends State<SongBottomSheet> {
                 color: AppColors.primary,
               ),
               child: QueryArtworkWidget(
-                id: 22,
+                id: song.id,
                 artworkBorder: BorderRadius.circular(10.r),
                 type: ArtworkType.AUDIO,
                 nullArtworkWidget: const Icon(
@@ -56,12 +57,12 @@ class _SongBottomSheetState extends State<SongBottomSheet> {
               ),
             ),
             title: CustomText(
-              text: "ksdkdksdnksdndwk",
+              text: song.title,
               style: TextStyle(color: AppColors.white, fontSize: 16.sp),
             ),
 
             subtitle: CustomText(
-              text: AppStrings.unknown,
+              text: song.artist ?? AppStrings.unknown,
               style: TextStyle(color: AppColors.lightGrey, fontSize: 13.sp),
             ),
             trailing: Row(
@@ -75,12 +76,20 @@ class _SongBottomSheetState extends State<SongBottomSheet> {
                     color: AppColors.primary,
                   ),
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.play_circle_outline_outlined,
-                    size: 30.r,
-                    color: AppColors.primary,
+                InkWell(
+                  onTap: () async {},
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 5.w),
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.primary,
+                    ),
+                    child: Icon(
+                      Icons.play_arrow_rounded,
+                      color: AppColors.white,
+                      size: 20.r,
+                    ),
                   ),
                 ),
                 IconButton(

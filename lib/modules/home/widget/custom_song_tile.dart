@@ -1,35 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:soundify/core/constant/app_strings.dart';
 import 'package:soundify/core/theme/app_colors.dart';
-import 'package:soundify/modules/home/views/song_details.dart';
+import 'package:soundify/modules/songs/controller/song_controller.dart';
 import 'package:soundify/widgets/custom_text.dart';
 
 class CustomSongTile extends StatelessWidget {
   final bool isFavorite;
   final SongModel song;
+  final int index;
   const CustomSongTile({
     super.key,
     this.isFavorite = false,
     required this.song,
+    required this.index,
   });
 
   @override
   Widget build(BuildContext context) {
+    final songController = Get.find<SongController>();
     debugPrint(song.album);
     return ListTile(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => SongDetails()),
-        );
+      splashColor: Colors.transparent,
+      onTap: () async {
+        songController.currentSongIndex.value = index;
+        await songController.playSong();
       },
       contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       leading: Container(
         height: 50.h,
         width: 50.w,
-        padding: EdgeInsets.all(.5),
+        padding: EdgeInsets.all(.2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.r),
           color: AppColors.primary,
@@ -41,19 +44,61 @@ class CustomSongTile extends StatelessWidget {
           nullArtworkWidget: const Icon(Icons.music_note), // agar image na ho
         ),
       ),
-      title: CustomText(
-        text: song.title,
-        style: TextStyle(color: AppColors.white, fontSize: 16.sp),
+      title: Obx(
+        () => CustomText(
+          text: song.title,
+          style: TextStyle(
+            color:
+                songController.currentSongIndex.value == index
+                    ? AppColors.primary
+                    : AppColors.white,
+            fontSize: 16.sp,
+            fontWeight:
+                songController.currentSongIndex.value == index
+                    ? FontWeight.w600
+                    : FontWeight.normal,
+          ),
+        ),
       ),
 
-      subtitle: CustomText(
-        text: song.artist ?? AppStrings.unknown,
-        style: TextStyle(color: AppColors.lightGrey, fontSize: 13.sp),
+      subtitle: Obx(
+        () => CustomText(
+          text: song.artist ?? AppStrings.unknown,
+          style: TextStyle(
+            color:
+                songController.currentSongIndex.value == index
+                    ? AppColors.primary
+                    : AppColors.lightGrey,
+            fontSize: 13.sp,
+            fontWeight:
+                songController.currentSongIndex.value == index
+                    ? FontWeight.w600
+                    : FontWeight.normal,
+          ),
+        ),
       ),
-      trailing: Icon(
-        Icons.play_circle_outline_outlined,
-        color: AppColors.primary,
-        size: 25.r,
+      trailing: Obx(
+        () => InkWell(
+          onTap: () async {
+            songController.currentSongIndex.value = index;
+            await songController.stopSong();
+            await songController.playPauseSong();
+          },
+          child: Container(
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.primary,
+            ),
+            child: Icon(
+              songController.currentSongIndex.value == index
+                  ? Icons.pause_rounded
+                  : Icons.play_arrow_rounded,
+              color: AppColors.white,
+              size: 20.r,
+            ),
+          ),
+        ),
       ),
     );
   }

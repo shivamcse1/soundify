@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:soundify/core/theme/app_colors.dart';
-import 'package:soundify/modules/home/controller/home_controller.dart';
 import 'package:soundify/modules/home/widget/custom_song_silder.dart';
 import 'package:soundify/modules/home/widget/custom_song_tile.dart';
+import 'package:soundify/modules/songs/controller/song_controller.dart';
 import 'package:soundify/widgets/custom_text.dart';
 import 'package:soundify/widgets/custom_textfield.dart';
 
@@ -16,8 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool isSearchTap = false;
-  final HomeController homeController = Get.put(HomeController());
+  final SongController songController = Get.find<SongController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,18 +35,11 @@ class _HomeState extends State<Home> {
             ),
           ),
         ),
-        title: Visibility(visible: isSearchTap, child: _buildHeader()),
+        title: Visibility(visible: false, child: _buildHeader()),
         actions: [
           InkWell(
-            onTap: () {
-              setState(() {
-                isSearchTap = !isSearchTap;
-              });
-            },
-            child: Icon(
-              isSearchTap ? Icons.cancel : Icons.search,
-              color: AppColors.primary,
-            ),
+            onTap: () {},
+            child: Icon(Icons.search, color: AppColors.primary),
           ),
           SizedBox(width: 20),
         ],
@@ -67,10 +59,13 @@ class _HomeState extends State<Home> {
               () => ListView.separated(
                 physics: NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
-                itemCount: homeController.allSongs.length,
+                itemCount: songController.allSongs.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  return CustomSongTile(song: homeController.allSongs[index]);
+                  return CustomSongTile(
+                    song: songController.allSongs[index],
+                    index: index,
+                  );
                 },
                 separatorBuilder: (context, index) {
                   return Divider(height: 5, color: AppColors.darkGrey);

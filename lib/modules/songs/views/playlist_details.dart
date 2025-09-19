@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:soundify/core/theme/app_colors.dart';
-import 'package:soundify/modules/home/controller/home_controller.dart';
 import 'package:soundify/modules/home/widget/custom_song_tile.dart';
+import 'package:soundify/modules/songs/controller/song_controller.dart';
 import 'package:soundify/widgets/custom_text.dart';
 
 class PlaylistDetails extends StatefulWidget {
@@ -14,7 +14,8 @@ class PlaylistDetails extends StatefulWidget {
 }
 
 class _PlaylistDetailsState extends State<PlaylistDetails> {
-  final HomeController homeController = Get.put(HomeController());
+  final SongController songController = Get.find<SongController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,13 +57,16 @@ class _PlaylistDetailsState extends State<PlaylistDetails> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Obx(
-              ()=> Expanded(
+              () => Expanded(
                 child: ListView.separated(
                   padding: EdgeInsets.zero,
                   itemCount: 20,
-              
+
                   itemBuilder: (context, index) {
-                                      return CustomSongTile(song: homeController.allSongs[index],);
+                    return CustomSongTile(
+                      song: songController.allSongs[index],
+                      index: index,
+                    );
                   },
                   separatorBuilder: (context, index) {
                     return Divider(height: 5, color: AppColors.darkGrey);
