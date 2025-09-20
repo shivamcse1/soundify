@@ -23,22 +23,22 @@ class _SongBottomSheetState extends State<SongBottomSheet> {
         songController.allSongs[songController.currentSongIndex.value];
     return Column(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Container(
           padding: EdgeInsets.only(left: 15.w, right: 15.w),
           decoration: BoxDecoration(
-            color: AppColors.darkGrey,
+            color: AppColors.grey,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.r),
               topRight: Radius.circular(20.r),
             ),
           ),
           child: ListTile(
+            minTileHeight: 50.h,
             onTap: () {
               Get.toNamed(AppRoutes.songDetails);
             },
-            contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+            contentPadding: EdgeInsets.zero,
             leading: Container(
               height: 40.h,
               width: 40.w,
@@ -51,8 +51,10 @@ class _SongBottomSheetState extends State<SongBottomSheet> {
                 id: song.id,
                 artworkBorder: BorderRadius.circular(10.r),
                 type: ArtworkType.AUDIO,
-                nullArtworkWidget: const Icon(
+                size: 500,
+                nullArtworkWidget: Icon(
                   Icons.music_note,
+                  color: AppColors.white,
                 ), // agar image na ho
               ),
             ),
@@ -69,7 +71,9 @@ class _SongBottomSheetState extends State<SongBottomSheet> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await songController.playPreviousSong();
+                  },
                   icon: Icon(
                     Icons.skip_previous,
                     size: 30.r,
@@ -77,7 +81,9 @@ class _SongBottomSheetState extends State<SongBottomSheet> {
                   ),
                 ),
                 InkWell(
-                  onTap: () async {},
+                  onTap: () async {
+                    await songController.playPauseSong();
+                  },
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 5.w),
                     padding: EdgeInsets.all(2),
@@ -85,15 +91,21 @@ class _SongBottomSheetState extends State<SongBottomSheet> {
                       shape: BoxShape.circle,
                       color: AppColors.primary,
                     ),
-                    child: Icon(
-                      Icons.play_arrow_rounded,
-                      color: AppColors.white,
-                      size: 20.r,
+                    child: Obx(
+                      () => Icon(
+                        songController.isPlaying.value
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        color: AppColors.white,
+                        size: 20.r,
+                      ),
                     ),
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await songController.playNextSong();
+                  },
                   icon: Icon(
                     Icons.skip_next_rounded,
                     size: 30.r,
@@ -104,14 +116,23 @@ class _SongBottomSheetState extends State<SongBottomSheet> {
             ),
           ),
         ),
-        LinearProgressIndicator(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.only(
-            topRight: Radius.circular(2.r),
-            bottomRight: Radius.circular(2.r),
-          ),
-          value: .5,
-        ),
+        Obx(() {
+          final total = songController.totalDuration.value.inMilliseconds;
+          final current = songController.currentPosition.value.inMilliseconds;
+          if (total == 0) {
+            return const LinearProgressIndicator(value: 0);
+          }
+          final progress = (current / total).clamp(0.0, 1.0);
+
+          return LinearProgressIndicator(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(2.r),
+              bottomRight: Radius.circular(2.r),
+            ),
+            value: progress,
+          );
+        }),
       ],
     );
   }

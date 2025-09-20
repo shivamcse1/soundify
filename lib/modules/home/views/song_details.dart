@@ -93,7 +93,7 @@ class _SongDetailsState extends State<SongDetails> {
         ),
         child: QueryArtworkWidget(
           id: song.id,
-          size: 220,
+          size: 500,
           artworkBorder: BorderRadius.circular(110),
           type: ArtworkType.AUDIO,
           artworkFit: BoxFit.cover,
@@ -135,25 +135,67 @@ class _SongDetailsState extends State<SongDetails> {
   Widget _buildMusicSlider({required SongModel song}) {
     return Row(
       children: [
-        CustomText(
-          text: "00:23",
-          style: TextStyle(color: AppColors.softWhite, fontSize: 14.sp),
-        ),
-
-        Expanded(
-          child: Slider(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            min: 0,
-            max: 10,
-            value: 3.0,
-            onChanged: (newValue) {},
-            activeColor: AppColors.primary,
+        Obx(
+          () => CustomText(
+            text: songController.getCurrentPosition(
+              duration:
+                  songController.isDragging.value
+                      ? Duration(
+                        milliseconds: songController.sliderValue.value.toInt(),
+                      )
+                      : songController.currentPosition.value,
+            ),
+            style: TextStyle(color: AppColors.secondary, fontSize: 14.sp),
           ),
         ),
 
-        CustomText(
-          text: "04:23",
-          style: TextStyle(color: AppColors.softWhite, fontSize: 14.sp),
+        Obx(() {
+          final total =
+              songController.totalDuration.value.inMilliseconds.toDouble();
+          var position =
+              songController.isDragging.value
+                  ? songController.sliderValue.value
+                  : songController.currentPosition.value.inMilliseconds
+                      .toDouble();
+
+          if (position > total) position = total;
+          return Expanded(
+            child: SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                trackHeight: 3.h,
+                overlayShape: RoundSliderOverlayShape(overlayRadius: 15),
+                thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
+              ),
+              child: Slider(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                min: 0,
+                max: total,
+                value: position,
+                onChanged: (currentPosition) async {
+                  songController.isDragging.value = true;
+                  songController.sliderValue.value = currentPosition;
+                },
+
+                onChangeEnd: (position) async {
+                  await songController.seekSong(
+                    currentPosition: Duration(milliseconds: position.toInt()),
+                  );
+                  songController.isDragging.value = false;
+                  songController.sliderValue.value = 0;
+                },
+                activeColor: AppColors.primary,
+              ),
+            ),
+          );
+        }),
+
+        Obx(
+          () => CustomText(
+            text: songController.calculateTotalDuration(
+              duration: songController.totalDuration.value,
+            ),
+            style: TextStyle(color: AppColors.softWhite, fontSize: 14.sp),
+          ),
         ),
       ],
     );
@@ -219,8 +261,11 @@ class _SongDetailsState extends State<SongDetails> {
       children: [
         _buildColumnIconItem(
           icon: Icons.shuffle,
+          isSelected: songController.isShuffle.value,
           text: "Shuffle",
-          onTap: () {},
+          onTap: () async {
+            await songController.shuffleSong();
+          },
         ),
         _buildColumnIconItem(
           icon: Icons.queue_music_sharp,
@@ -233,7 +278,23 @@ class _SongDetailsState extends State<SongDetails> {
           onTap: () {},
         ),
 
-        _buildColumnIconItem(icon: Icons.repeat, text: "Repeat", onTap: () {}),
+        _buildColumnIconItem(
+          icon:
+              songController.repeatSongNumber.value == 1
+                  ? Icons.repeat_one
+                  : songController.repeatSongNumber.value == 2
+                  ? Icons.loop
+                  : Icons.repeat,
+          text: "Repeat",
+          isSelected:
+              (songController.repeatSongNumber.value != 1 &&
+                      songController.repeatSongNumber.value != 2)
+                  ? false
+                  : true,
+          onTap: () async {
+            await songController.setRepeatSong();
+          },
+        ),
       ],
     );
   }
@@ -241,6 +302,7 @@ class _SongDetailsState extends State<SongDetails> {
   Widget _buildColumnIconItem({
     required IconData icon,
     required String text,
+    bool isSelected = false,
     VoidCallback? onTap,
   }) {
     return InkWell(
@@ -248,10 +310,17 @@ class _SongDetailsState extends State<SongDetails> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: AppColors.softWhite, size: 25.r),
+          Icon(
+            icon,
+            color: isSelected ? AppColors.primary : AppColors.softWhite,
+            size: 25.r,
+          ),
           CustomText(
             text: text,
-            style: TextStyle(fontSize: 12.sp, color: AppColors.softWhite),
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: isSelected ? AppColors.primary : AppColors.softWhite,
+            ),
           ),
         ],
       ),

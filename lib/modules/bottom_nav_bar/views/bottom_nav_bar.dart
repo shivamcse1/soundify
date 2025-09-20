@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:soundify/core/theme/app_colors.dart';
 import 'package:soundify/modules/bottom_nav_bar/views/song_bottom_sheet.dart';
 import 'package:soundify/modules/home/views/home.dart';
 import 'package:soundify/modules/profile/views/profile.dart';
+import 'package:soundify/modules/songs/controller/song_controller.dart';
 import 'package:soundify/modules/songs/views/songs.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -13,13 +15,20 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
+  final SongController songController = Get.find<SongController>();
+
   int currentIndex = 0;
   final List<Widget> _pages = [Home(), Songs(), Profile()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[currentIndex],
-      // bottomSheet: SongBottomSheet(),
+      bottomSheet: Obx(
+        () => Visibility(
+          visible: songController.currentSongIndex >= 0,
+          child: SongBottomSheet(),
+        ),
+      ),
       bottomNavigationBar: NavigationBar(
         height: 60,
         selectedIndex: currentIndex,

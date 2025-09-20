@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:soundify/core/constant/app_strings.dart';
+import 'package:soundify/core/services/audio_player_services.dart';
 import 'package:soundify/core/theme/app_colors.dart';
 import 'package:soundify/modules/songs/controller/song_controller.dart';
 import 'package:soundify/widgets/custom_text.dart';
@@ -26,7 +28,12 @@ class CustomSongTile extends StatelessWidget {
       splashColor: Colors.transparent,
       onTap: () async {
         songController.currentSongIndex.value = index;
-        await songController.playSong();
+        songController.repeatSongNumber.value = 2;
+        await AudioPlayerServices.repeatMusic(
+          loopMode: LoopMode.all,
+          initialIndex: index,
+          playlist: songController.allSongs,
+        );
       },
       contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       leading: Container(
@@ -41,7 +48,10 @@ class CustomSongTile extends StatelessWidget {
           id: song.id,
           artworkBorder: BorderRadius.circular(10.r),
           type: ArtworkType.AUDIO,
-          nullArtworkWidget: const Icon(Icons.music_note), // agar image na ho
+          nullArtworkWidget: const Icon(
+            Icons.music_note,
+            color: AppColors.white,
+          ), // agar image na ho
         ),
       ),
       title: Obx(

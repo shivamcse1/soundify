@@ -1,5 +1,8 @@
+// ignore_for_file: unused_local_variable, deprecated_member_use
+
 import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class AudioPlayerServices {
   /// for Singleton logic ///
@@ -59,5 +62,30 @@ class AudioPlayerServices {
   /// This method is used for shuffle music ///
   static Future<void> shuffleMusic() async {
     await audioPlayer.shuffle();
+  }
+
+  /// This method is used for shuffle music ///
+  static Future<void> repeatMusic({
+    LoopMode loopMode = LoopMode.one,
+    List<SongModel>? playlist,
+    int initialIndex = 0,
+  }) async {
+    if (loopMode == LoopMode.all && playlist != null) {
+      final songPlaylist = ConcatenatingAudioSource(
+        children:
+            playlist.map((singleSong) {
+              return AudioSource.uri(Uri.parse(singleSong.uri ?? ''));
+            }).toList(),
+      );
+
+      await audioPlayer.setAudioSource(
+        songPlaylist,
+        initialIndex: initialIndex,
+      );
+    }
+    await audioPlayer.setLoopMode(loopMode);
+    if (!audioPlayer.playing) {
+      await audioPlayer.play();
+    }
   }
 }
